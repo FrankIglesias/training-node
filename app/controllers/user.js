@@ -32,3 +32,5 @@ exports.create = (req, res, next) => {
     }
   });
 };
+
+exports.signIn = (req, res, next) => {};
