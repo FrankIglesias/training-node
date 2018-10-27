@@ -1,21 +1,20 @@
 const User = require('../models').User,
   bcrypt = require('bcryptjs'),
+  errors = require('../errors'),
   logger = require('../logger');
 
 exports.create = (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
-  if (!firstName || !lastName || !email || !password)
-    return next({ internalCode: 400, message: 'Missing params in body' });
-  if (!/[a-z0-9._]@wolox.com.ar/.test(email)) return next({ internalCode: 401, message: 'Invalid email' });
-  if (password.length < 8 || !/[0-9a-zA-Z]+/.test(password))
-    return next({ internalCode: 401, message: 'Invalid password format' });
+  if (!firstName || !lastName || !email || !password) return next(errors.missingParamsError);
+  if (!/[a-z0-9._]@wolox.com.ar/.test(email)) return next(errors.invalidEmailError);
+  if (password.length < 8 || !/[0-9a-zA-Z]+/.test(password)) return next(errors.invalidPasswordFormatError);
   User.find({
     where: {
       email
     }
   }).then(user => {
     if (user) {
-      return next({ internalCode: 401, message: 'User already exists' });
+      return next(errors.userAlreadyExistsError);
     } else {
       bcrypt.hash(req.body.password, 10).then(hash => {
         req.body.password = hash;
