@@ -19,7 +19,7 @@ exports.create = (req, res, next) => {
         User.createUser(req.body)
           .then(newUser => {
             logger.info(`User with email ${newUser.email} correctly created`);
-            res.status(200).send({ newUser });
+            res.status(201).send({ newUser });
           })
           .catch(error => {
             logger.error(`Database Error. Details: ${JSON.stringify(error)}`);
@@ -30,4 +30,17 @@ exports.create = (req, res, next) => {
   });
 };
 
-exports.signIn = (req, res, next) => {};
+exports.signIn = (req, res, next) => {
+  const { email, password } = req.body;
+  if (!woloxEmail.test(email)) return next(errors.invalidEmailError);
+  User.findByEmail(email).then(user => {
+    if (!user) {
+      return next(errors.userDoesNotExists);
+    } else {
+      bcrypt.compare(password, user.password).then(equals => {
+        if (!equals) next(errors.forbiddenError);
+        res.status(200).send({ user });
+      });
+    }
+  });
+};

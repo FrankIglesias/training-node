@@ -20,3 +20,6 @@ exports.invalidEmailError = { internalCode: 422, message: exports.INVALID_EMAIL_
 
 exports.INVALID_PASSWORD_FORMAT = 'Password format is invalid';
 exports.invalidPasswordFormatError = { internalCode: 422, message: exports.INVALID_PASSWORD_FORMAT };
+
+exports.USER_DOES_NOT_EXISTS = 'User not found';
+exports.userDoesNotExists = { internalCode: 404, message: exports.USER_DOES_NOT_EXISTS };
