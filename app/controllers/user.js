@@ -60,3 +60,17 @@ exports.getUsers = (req, res, next) => {
     res.status(200).send(users);
   });
 };
+
+exports.createAdmin = (req, res, next) => {
+  User.findByEmail(req.body.email).then(user => {
+    if (user)
+      user.update({ ...user, isAdmin: true }).then(newUser => {
+        res.status(204).send(newUser);
+      });
+    else {
+      User.createUser(req.body).then(newUser => {
+        res.status(201).send(newUser);
+      });
+    }
+  });
+};
