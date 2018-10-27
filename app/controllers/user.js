@@ -64,11 +64,11 @@ exports.getUsers = (req, res, next) => {
 exports.createAdmin = (req, res, next) => {
   User.findByEmail(req.body.email).then(user => {
     if (user)
-      user.update({ ...user, isAdmin: true }).then(newUser => {
-        res.status(204).send(newUser);
+      user.update({ isAdmin: true }).then(newUser => {
+        res.status(204).send({ user });
       });
     else {
-      User.createUser(req.body).then(newUser => {
+      User.createUser({ ...req.body, isAdmin: true }).then(newUser => {
         res.status(201).send(newUser);
       });
     }
