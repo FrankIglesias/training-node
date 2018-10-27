@@ -1,10 +1,13 @@
 const User = require('../services/user'),
   bcrypt = require('bcryptjs'),
   errors = require('../errors'),
-  logger = require('../logger');
+  logger = require('../logger'),
+  jwt = require('jwt-simple'),
+  moment = require('moment');
 
 const woloxEmail = /[a-z0-9._]@wolox.com.ar/;
 const passwordRegex = /[0-9a-zA-Z]+/;
+
 exports.create = (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !lastName || !email || !password) return next(errors.missingParamsError);
@@ -39,7 +42,14 @@ exports.signIn = (req, res, next) => {
     } else {
       bcrypt.compare(password, user.password).then(equals => {
         if (!equals) next(errors.forbiddenError);
-        res.status(200).send({ user });
+        else {
+          const creationDate = moment();
+          const token = jwt.encode(
+            { email: req.email, creationDate, expirationDate: creationDate.add('days', 2) },
+            '123'
+          );
+          res.status(200).send({ user, token });
+        }
       });
     }
   });
