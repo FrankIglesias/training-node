@@ -3,11 +3,13 @@ const User = require('../models').User,
   errors = require('../errors'),
   logger = require('../logger');
 
+const woloxEmail = /[a-z0-9._]@wolox.com.ar/;
+const passwordRegex = /[0-9a-zA-Z]+/;
 exports.create = (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !lastName || !email || !password) return next(errors.missingParamsError);
-  if (!/[a-z0-9._]@wolox.com.ar/.test(email)) return next(errors.invalidEmailError);
-  if (password.length < 8 || !/[0-9a-zA-Z]+/.test(password)) return next(errors.invalidPasswordFormatError);
+  if (!woloxEmail.test(email)) return next(errors.invalidEmailError);
+  if (password.length < 8 || !passwordRegex.test(password)) return next(errors.invalidPasswordFormatError);
   User.find({
     where: {
       email
