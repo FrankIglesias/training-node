@@ -44,3 +44,9 @@ exports.signIn = (req, res, next) => {
     }
   });
 };
+
+exports.getUsers = (req, res, next) => {
+  User.getUsers(req.params).then(users => {
+    res.status(200).send(users);
+  });
+};
