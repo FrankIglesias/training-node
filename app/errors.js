@@ -23,3 +23,9 @@ exports.invalidPasswordFormatError = { internalCode: 422, message: exports.INVAL
 
 exports.USER_DOES_NOT_EXISTS = 'User not found';
 exports.userDoesNotExists = { internalCode: 404, message: exports.USER_DOES_NOT_EXISTS };
+
+exports.EXPIRED_TOKEN_ERROR = 'Token expired';
+exports.expiredTokenError = { internalCode: 404, message: exports.EXPIRED_TOKEN_ERROR };
+
+exports.UNAUTHORIZED_ERROR = 'Not authorized';
+exports.unauthorizedError = { internalCode: 401, message: exports.UNAUTHORIZED_ERROR };

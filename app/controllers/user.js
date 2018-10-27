@@ -45,7 +45,7 @@ exports.signIn = (req, res, next) => {
         else {
           const creationDate = moment();
           const token = jwt.encode(
-            { email: req.email, creationDate, expirationDate: creationDate.add('days', 2) },
+            { email, creationDate, expirationDate: creationDate.add('days', 2) },
             '123'
           );
           res.status(200).send({ user, token });
