@@ -38,11 +38,13 @@ exports.signIn = (req, res, next) => {
   if (!woloxEmail.test(email)) return next(errors.invalidEmailError);
   User.findByEmail(email).then(user => {
     if (!user) {
+      logger.error('User does not exists');
       return next(errors.userDoesNotExists);
     } else {
       bcrypt.compare(password, user.password).then(equals => {
         if (!equals) next(errors.forbiddenError);
         else {
+          logger.info('Valid credentials');
           const creationDate = moment();
           const token = jwt.encode(
             { email: req.email, creationDate, expirationDate: creationDate.add('days', 2) },
