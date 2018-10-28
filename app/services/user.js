@@ -1,4 +1,5 @@
-const User = require('../models').User;
+const User = require('../models').User,
+  logger = require('../logger');
 
 exports.findByEmail = email =>
   User.find({
@@ -7,4 +8,8 @@ exports.findByEmail = email =>
     }
   });
 
-exports.createUser = body => User.create(body);
+exports.createUser = body =>
+  User.create(body).catch(error => {
+    logger.error(`Database Error. Details: ${JSON.stringify(error)}`);
+    throw error;
+  });
