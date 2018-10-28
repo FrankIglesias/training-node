@@ -16,15 +16,10 @@ exports.create = (req, res, next) => {
     } else {
       bcrypt.hash(req.body.password, 10).then(hash => {
         req.body.password = hash;
-        User.createUser(req.body)
-          .then(newUser => {
-            logger.info(`User with email ${newUser.email} correctly created`);
-            res.status(200).send({ newUser });
-          })
-          .catch(error => {
-            logger.error(`Database Error. Details: ${JSON.stringify(error)}`);
-            next(error);
-          });
+        User.createUser(req.body).then(newUser => {
+          logger.info(`User with email ${newUser.email} correctly created`);
+          res.status(200).send({ newUser });
+        });
       });
     }
   });
