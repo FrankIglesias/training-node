@@ -29,10 +29,8 @@ describe('/user POST', () => {
             password: '123waerdfg'
           })
           .catch(res => {
-            console.log(res);
-            // res.should.have.status(401);
-            // res.should.be.json;
-            // dictum.chai(res, 'description for endpoint');
+            res.should.have.status(400);
+            res.response.body.should.have.property('message');
             done();
           });
       });
