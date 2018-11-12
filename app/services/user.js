@@ -7,13 +7,13 @@ exports.findByEmail = email =>
     where: {
       email
     }
-  }).catch(error => {
-    logger.error(`Database Error. Details: ${JSON.stringify(error)}`);
-    throw error.databaseError(error.detail);
+  }).catch(err => {
+    logger.error(err);
+    throw errors.databaseError(err.detail);
   });
 
 exports.createUser = body =>
   User.create(body).catch(error => {
-    logger.error(`Database Error. Details: ${JSON.stringify(error)}`);
-    throw error.databaseError(error.detail);
+    logger.error(error);
+    throw errors.databaseError(error.detail);
   });
