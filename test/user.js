@@ -4,7 +4,7 @@ const chai = require('chai'),
   should = chai.should();
 
 describe('/user POST', () => {
-  it('should fail when email already exists', () => {
+  it('should fail when email already exists', done => {
     chai
       .request(server)
       .post('/user')
@@ -24,14 +24,14 @@ describe('/user POST', () => {
             email: 'steph.strange@wolox.com.ar',
             password: '123waerdfg'
           })
-          .then(res => {
-            res.should.have.status(401);
-            res.should.be.json;
-            dictum.chai(res, 'description for endpoint');
+          .catch(res => {
+            res.should.have.status(400);
+            res.response.body.should.have.property('message');
+            done();
           });
       });
   });
-  it('should fail when password does not fullfil minimum length', () => {
+  it('should fail when password does not fullfil minimum length', done => {
     chai
       .request(server)
       .post('/user')
@@ -41,13 +41,13 @@ describe('/user POST', () => {
         email: 'steph.strange@wolox.com.ar',
         password: '123'
       })
-      .then(res => {
-        res.should.have.status(401);
-        res.should.be.json;
-        dictum.chai(res, 'description for endpoint');
+      .catch(res => {
+        res.should.have.status(422);
+        res.response.body.should.have.property('message');
+        done();
       });
   });
-  it('should fail when params are missing', () => {
+  it('should fail when params are missing', done => {
     chai
       .request(server)
       .post('/user')
@@ -56,10 +56,10 @@ describe('/user POST', () => {
         email: 'steph.strange@wolox.com.ar',
         password: '123waerdfg'
       })
-      .then(res => {
-        res.should.have.status(401);
-        res.should.be.json;
-        dictum.chai(res, 'description for endpoint');
+      .catch(res => {
+        res.should.have.status(422);
+        res.response.body.should.have.property('message');
+        done();
       });
   });
 });
