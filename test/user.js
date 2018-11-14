@@ -65,7 +65,7 @@ describe('/user POST', () => {
 });
 
 describe('/user/sessions POST', () => {
-  it('Login fails with invalid email', () => {
+  it('Login fails with invalid email', done => {
     chai
       .request(server)
       .post('/user/sessions')
@@ -73,13 +73,13 @@ describe('/user/sessions POST', () => {
         email: 'francisco.iglesias+4231@wolox.com.ar',
         password: '12345678'
       })
-      .then(res => {
-        res.should.have.status(401);
-        res.should.be.json;
-        dictum.chai(res, 'description for endpoint');
+      .catch(res => {
+        res.should.have.status(404);
+        res.response.body.should.have.property('message');
+        done();
       });
   });
-  it('Login fails with invalid password', () => {
+  it('Login fails with invalid password', done => {
     chai
       .request(server)
       .post('/user/sessions')
@@ -87,10 +87,10 @@ describe('/user/sessions POST', () => {
         email: 'francisco.iglesias+1@wolox.com.ar',
         password: '3842942304234'
       })
-      .then(res => {
-        res.should.have.status(401);
-        res.should.be.json;
-        dictum.chai(res, 'description for endpoint');
+      .catch(res => {
+        res.should.have.status(404);
+        res.response.body.should.have.property('message');
+        done();
       });
   });
 });
