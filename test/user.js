@@ -74,7 +74,7 @@ describe('/user/sessions POST', () => {
         password: '12345678'
       })
       .catch(res => {
-        res.should.have.status(404);
+        res.should.have.status(403);
         res.response.body.should.have.property('message');
         done();
       });
@@ -88,7 +88,7 @@ describe('/user/sessions POST', () => {
         password: '3842942304234'
       })
       .catch(res => {
-        res.should.have.status(404);
+        res.should.have.status(403);
         res.response.body.should.have.property('message');
         done();
       });
