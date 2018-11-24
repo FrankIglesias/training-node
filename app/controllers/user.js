@@ -1,4 +1,5 @@
 const User = require('../services/user'),
+  JwtService = require('../services/jwtService'),
   bcrypt = require('bcryptjs'),
   errors = require('../errors'),
   logger = require('../logger'),
@@ -37,19 +38,10 @@ exports.signIn = (req, res, next) => {
     .then(user => {
       if (!user) {
         logger.error('User does not exists');
-        return next(errors.userDoesNotExists);
+        throw errors.forbiddenError;
       } else {
-        bcrypt.compare(password, user.password).then(equals => {
-          if (!equals) next(errors.forbiddenError);
-          else {
-            logger.info('Valid credentials');
-            const creationDate = moment();
-            const token = jwt.encode(
-              { email: req.email, creationDate, expirationDate: creationDate.add('days', 2) },
-              '123'
-            );
-            res.status(200).send({ user, token });
-          }
+        JwtService.comparePasswords(password, user).then(response => {
+          res.status(200).send(response);
         });
       }
     })
