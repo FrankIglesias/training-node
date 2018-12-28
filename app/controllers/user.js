@@ -16,17 +16,14 @@ exports.create = (req, res, next) => {
   if (password.length < 8 || !passwordRegex.test(password)) return next(errors.invalidPasswordFormatError);
   User.findByEmail(email)
     .then(user => {
-      if (user) {
-        return next(errors.userAlreadyExistsError);
-      } else {
-        bcrypt.hash(req.body.password, 10).then(hash => {
-          req.body.password = hash;
-          User.createUser(req.body).then(newUser => {
-            logger.info(`User with email ${newUser.email} correctly created`);
-            res.status(201).send({ newUser });
-          });
+      if (user) return next(errors.userAlreadyExistsError);
+      bcrypt.hash(req.body.password, 10).then(hash => {
+        req.body.password = hash;
+        User.createUser(req.body).then(newUser => {
+          logger.info(`User with email ${newUser.email} correctly created`);
+          res.status(201).send({ newUser });
         });
-      }
+      });
     })
     .catch(next);
 };
@@ -39,11 +36,10 @@ exports.signIn = (req, res, next) => {
       if (!user) {
         logger.error('User does not exists');
         throw errors.forbiddenError;
-      } else {
-        JwtService.comparePasswords(password, user).then(response => {
-          res.status(200).send(response);
-        });
       }
+      JwtService.comparePasswords(password, user).then(response => {
+        res.status(200).send(response);
+      });
     })
     .catch(next);
 };
