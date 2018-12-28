@@ -21,5 +21,8 @@ exports.invalidEmailError = { internalCode: 422, message: INVALID_EMAIL_ERROR };
 const INVALID_PASSWORD_FORMAT = 'Password format is invalid';
 exports.invalidPasswordFormatError = { internalCode: 422, message: INVALID_PASSWORD_FORMAT };
 
-exports.DATABASE_ERROR = 'database_error';
-exports.databaseError = message => internalError(exports.DATABASE_ERROR, [message]);
+const USER_DOES_NOT_EXISTS = 'User not found';
+exports.userDoesNotExists = { internalCode: 404, message: USER_DOES_NOT_EXISTS };
+
+const DATABASE_ERROR = 'database_error';
+exports.databaseError = message => internalError(DATABASE_ERROR, [message]);
