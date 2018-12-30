@@ -1,13 +1,16 @@
-const User = require('../models').User;
+const User = require('../models').User,
+  logger = require('../logger'),
+  errors = require('../errors');
 
 exports.findByEmail = email =>
   User.find({
     where: {
       email
     }
+  }).catch(err => {
+    logger.error(err);
+    throw errors.databaseError(err.detail);
   });
-
-exports.createUser = body => User.create(body);
 
 exports.getUsers = ({ page = 0, limit = 20 }) =>
   User.findAll({ offset: page * limit, limit }).then(users => {
@@ -17,4 +20,10 @@ exports.getUsers = ({ page = 0, limit = 20 }) =>
         current_page: page + 1
       });
     });
+  });
+
+exports.createUser = body =>
+  User.create(body).catch(error => {
+    logger.error(error);
+    throw errors.databaseError(error.detail);
   });
