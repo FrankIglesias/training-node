@@ -13,13 +13,9 @@ exports.findByEmail = email =>
   });
 
 exports.getUsers = ({ page = 0, limit = 20 }) =>
-  User.findAll({ offset: page * limit, limit }).then(users => {
-    return new Promise(resolve => {
-      resolve({
-        page: users,
-        current_page: page + 1
-      });
-    });
+  User.findAll({ offset: page * limit, limit }).carch(error => {
+    logger.error(error);
+    throw errors.databaseError(error.detail);
   });
 
 exports.createUser = body =>

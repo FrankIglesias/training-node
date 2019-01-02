@@ -48,7 +48,10 @@ exports.signIn = (req, res, next) => {
 exports.getUsers = (req, res, next) => {
   User.getUsers(req.params)
     .then(users => {
-      res.status(200).send(users);
+      res.status(200).send({
+        page: users,
+        current_page: req.params.page + 1
+      });
     })
     .catch(next);
 };
