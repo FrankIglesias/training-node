@@ -3,12 +3,8 @@ const chai = require('chai'),
   server = require('./../app'),
   should = chai.should();
 
-// Se debe testear que la creación falle cuando se utilice un mail que se encuentra en uso.
-// Se debe testear que la creación falle cuando la contraseña no cumple con los requerimientos.
-// Se debe testear que la creación falle cuando no se envíe cualquiera de los parámetros obligatorios.
-
 describe('/user POST', () => {
-  it('should fail when email already exists', () => {
+  it('should fail when email already exists', done => {
     chai
       .request(server)
       .post('/user')
@@ -28,14 +24,14 @@ describe('/user POST', () => {
             email: 'steph.strange@wolox.com.ar',
             password: '123waerdfg'
           })
-          .then(res => {
-            res.should.have.status(401);
-            res.should.be.json;
-            dictum.chai(res, 'description for endpoint');
+          .catch(res => {
+            res.should.have.status(400);
+            res.response.body.should.have.property('message');
+            done();
           });
       });
   });
-  it('should fail when password does not fullfil minimum length', () => {
+  it('should fail when password does not fullfil minimum length', done => {
     chai
       .request(server)
       .post('/user')
@@ -45,13 +41,13 @@ describe('/user POST', () => {
         email: 'steph.strange@wolox.com.ar',
         password: '123'
       })
-      .then(res => {
-        res.should.have.status(401);
-        res.should.be.json;
-        dictum.chai(res, 'description for endpoint');
+      .catch(res => {
+        res.should.have.status(422);
+        res.response.body.should.have.property('message');
+        done();
       });
   });
-  it('should fail when params are missing', () => {
+  it('should fail when params are missing', done => {
     chai
       .request(server)
       .post('/user')
@@ -60,10 +56,41 @@ describe('/user POST', () => {
         email: 'steph.strange@wolox.com.ar',
         password: '123waerdfg'
       })
-      .then(res => {
-        res.should.have.status(401);
-        res.should.be.json;
-        dictum.chai(res, 'description for endpoint');
+      .catch(res => {
+        res.should.have.status(422);
+        res.response.body.should.have.property('message');
+        done();
+      });
+  });
+});
+
+describe('/user/sessions POST', () => {
+  it('Login fails with invalid email', done => {
+    chai
+      .request(server)
+      .post('/user/sessions')
+      .send({
+        email: 'francisco.iglesias+4231@wolox.com.ar',
+        password: '12345678'
+      })
+      .catch(res => {
+        res.should.have.status(403);
+        res.response.body.should.have.property('message');
+        done();
+      });
+  });
+  it('Login fails with invalid password', done => {
+    chai
+      .request(server)
+      .post('/user/sessions')
+      .send({
+        email: 'francisco.iglesias+1@wolox.com.ar',
+        password: '3842942304234'
+      })
+      .catch(res => {
+        res.should.have.status(403);
+        res.response.body.should.have.property('message');
+        done();
       });
   });
 });

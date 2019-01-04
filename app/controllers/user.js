@@ -1,4 +1,5 @@
 const User = require('../services/user'),
+  JwtService = require('../services/jwtService'),
   bcrypt = require('bcryptjs'),
   errors = require('../errors'),
   logger = require('../logger'),
@@ -13,52 +14,46 @@ exports.create = (req, res, next) => {
   if (!firstName || !lastName || !email || !password) return next(errors.missingParamsError);
   if (!woloxEmail.test(email)) return next(errors.invalidEmailError);
   if (password.length < 8 || !passwordRegex.test(password)) return next(errors.invalidPasswordFormatError);
-  User.findByEmail(email).then(user => {
-    if (user) {
-      return next(errors.userAlreadyExistsError);
-    } else {
+  User.findByEmail(email)
+    .then(user => {
+      if (user) return next(errors.userAlreadyExistsError);
       bcrypt.hash(req.body.password, 10).then(hash => {
         req.body.password = hash;
-        User.createUser(req.body)
-          .then(newUser => {
-            logger.info(`User with email ${newUser.email} correctly created`);
-            res.status(201).send({ newUser });
-          })
-          .catch(error => {
-            logger.error(`Database Error. Details: ${JSON.stringify(error)}`);
-            next(error);
-          });
+        User.createUser(req.body).then(newUser => {
+          logger.info(`User with email ${newUser.email} correctly created`);
+          res.status(201).send({ newUser });
+        });
       });
-    }
-  });
+    })
+    .catch(next);
 };
 
 exports.signIn = (req, res, next) => {
   const { email, password } = req.body;
   if (!woloxEmail.test(email)) return next(errors.invalidEmailError);
-  User.findByEmail(email).then(user => {
-    if (!user) {
-      return next(errors.userDoesNotExists);
-    } else {
-      bcrypt.compare(password, user.password).then(equals => {
-        if (!equals) next(errors.forbiddenError);
-        else {
-          const creationDate = moment();
-          const token = jwt.encode(
-            { email, creationDate, expirationDate: creationDate.add('days', 2) },
-            '123'
-          );
-          res.status(200).send({ user, token });
-        }
+  User.findByEmail(email)
+    .then(user => {
+      if (!user) {
+        logger.error('User does not exists');
+        throw errors.forbiddenError;
+      }
+      JwtService.comparePasswords(password, user).then(response => {
+        const token = JwtService.createToken(email);
+        res.status(200).send({ user, token });
       });
-    }
-  });
+    })
+    .catch(next);
 };
 
 exports.getUsers = (req, res, next) => {
-  User.getUsers(req.params).then(users => {
-    res.status(200).send(users);
-  });
+  User.getUsers(req.params)
+    .then(users => {
+      res.status(200).send({
+        page: users,
+        current_page: (req.params.page || 0) + 1
+      });
+    })
+    .catch(next);
 };
 
 exports.createAdmin = (req, res, next) => {
