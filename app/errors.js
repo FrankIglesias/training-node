@@ -21,8 +21,14 @@ exports.invalidEmailError = { internalCode: 422, message: INVALID_EMAIL_ERROR };
 const INVALID_PASSWORD_FORMAT = 'Password format is invalid';
 exports.invalidPasswordFormatError = { internalCode: 422, message: INVALID_PASSWORD_FORMAT };
 
-const USER_DOES_NOT_EXISTS = 'User not found';
-exports.userDoesNotExists = { internalCode: 404, message: USER_DOES_NOT_EXISTS };
+exports.USER_DOES_NOT_EXISTS = 'User not found';
+exports.userDoesNotExists = { internalCode: 404, message: exports.USER_DOES_NOT_EXISTS };
+
+exports.EXPIRED_TOKEN_ERROR = 'Token expired';
+exports.expiredTokenError = { internalCode: 404, message: exports.EXPIRED_TOKEN_ERROR };
+
+exports.UNAUTHORIZED_ERROR = 'Not authorized';
+exports.unauthorizedError = { internalCode: 401, message: exports.UNAUTHORIZED_ERROR };
 
 const DATABASE_ERROR = 'database_error';
 exports.databaseError = message => internalError(DATABASE_ERROR, [message]);

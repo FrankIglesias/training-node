@@ -38,7 +38,19 @@ exports.signIn = (req, res, next) => {
         throw errors.forbiddenError;
       }
       JwtService.comparePasswords(password, user).then(response => {
-        res.status(200).send(response);
+        const token = JwtService.createToken(email);
+        res.status(200).send({ user, token });
+      });
+    })
+    .catch(next);
+};
+
+exports.getUsers = (req, res, next) => {
+  User.getUsers(req.params)
+    .then(users => {
+      res.status(200).send({
+        page: users,
+        current_page: (req.params.page || 0) + 1
       });
     })
     .catch(next);

@@ -12,6 +12,12 @@ exports.findByEmail = email =>
     throw errors.databaseError(err.detail);
   });
 
+exports.getUsers = ({ page = 0, limit = 20 }) =>
+  User.findAll({ offset: page * limit, limit }).carch(error => {
+    logger.error(error);
+    throw errors.databaseError(error.detail);
+  });
+
 exports.createUser = body =>
   User.create(body).catch(error => {
     logger.error(error);

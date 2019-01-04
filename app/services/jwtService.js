@@ -15,3 +15,6 @@ exports.comparePasswords = (password, user) =>
     );
     return { user, token };
   });
+
+exports.createToken = (email, creationDate = moment()) =>
+  jwt.encode({ email, creationDate, expirationDate: creationDate.add('days', 2) }, '123');
